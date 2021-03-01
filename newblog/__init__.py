@@ -1,6 +1,7 @@
 import os
 from flask import Flask
 from newblog.settings import configs
+from newblog.extensions import db, mail, moment, login_manager
 
 
 def create_app(config_name=None):
@@ -10,6 +11,7 @@ def create_app(config_name=None):
     app.config.from_object(configs[config_name])
 
     register_bp(app)
+    register_extensions(app)
 
     return app
 
@@ -23,3 +25,10 @@ def register_bp(app):
     app.register_blueprint(auth, url_prefix='/auth')
     app.register_blueprint(api, url_prefix='/api')
     app.register_blueprint(admin, url_prefix='/admin')
+
+
+def register_extensions(app):
+    db.init_app(app)
+    mail.init_app(app)
+    moment.init_app(app)
+    login_manager.init_app(app)
