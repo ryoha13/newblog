@@ -1,6 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, BooleanField
-from wtforms.validators import DataRequired, Length, Email, EqualTo
+from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
+from newblog.models import User
 
 
 class LoginForm(FlaskForm):
@@ -18,7 +19,14 @@ class RegisterForm(FlaskForm):
     submit = SubmitField('注册')
 
     def validate_username(self, field):
-        pass
+        if User.query.filter_by(username=field.data).first() is not None:
+            raise ValidationError('用户名已经被占用')
 
     def validate_email(self, field):
-        pass
+        if User.query.filter_by(email=field.data.lower()).first() is not None:
+            raise ValidationError('邮箱已经被占用')
+
+
+class ResetPasswordRequestForm(FlaskForm):
+    email = StringField('邮箱', validators=[DataRequired(), Length(1, 64), Email()])
+    submit = SubmitField('发送')

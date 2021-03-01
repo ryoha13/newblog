@@ -9,6 +9,8 @@ class Config(object):
     SECRET_KEY = os.getenv('SECRET_KEY')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
+    ADMIN_EMAIL = os.getenv('ADMIN_EMAIL')
+
 
 class DevConfig(Config):
     SQLALCHEMY_DATABASE_URI = os.getenv('DEV_URI')

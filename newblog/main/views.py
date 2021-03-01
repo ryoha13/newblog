@@ -1,6 +1,7 @@
+from flask import render_template
 from ..main import main
 
 
 @main.route('/')
 def index():
-    return 'index page'
+    return render_template('main/index.html')
