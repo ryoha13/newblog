@@ -11,6 +11,9 @@
             <h1 class="my-4">Page Heading
                 <small>Secondary Text</small>
             </h1>
+            <div>
+                <img src="{{ url_for('main.get_avatar', filename=current_user.avatar_s) }}">
+            </div>
 
             <!-- Blog Post -->
             <div class="card mb-4">

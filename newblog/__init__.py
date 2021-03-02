@@ -1,7 +1,7 @@
 import os
 from flask import Flask
 from newblog.settings import configs
-from newblog.extensions import db, mail, moment, login_manager
+from newblog.extensions import db, mail, moment, login_manager, avatars, migrate
 
 
 def create_app(config_name=None):
@@ -32,3 +32,5 @@ def register_extensions(app):
     mail.init_app(app)
     moment.init_app(app)
     login_manager.init_app(app)
+    avatars.init_app(app)
+    migrate.init_app(app, db)

@@ -1,6 +1,9 @@
 import os
 
 
+basedir = os.path.abspath(os.path.dirname(__file__))
+
+
 class Operations:
     pass
 
@@ -10,6 +13,8 @@ class Config(object):
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     ADMIN_EMAIL = os.getenv('ADMIN_EMAIL')
+
+    ALBUMY_UPLOAD_PATH = os.path.join(basedir, 'uploads')
 
 
 class DevConfig(Config):

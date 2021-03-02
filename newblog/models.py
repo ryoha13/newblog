@@ -2,6 +2,7 @@ from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask import current_app
 from flask_login import UserMixin, AnonymousUserMixin
+from flask_avatars import Identicon
 from newblog.extensions import db, login_manager
 
 roles_permissions = db.Table(
@@ -52,16 +53,18 @@ class Role(db.Model):
         db.session.commit()
 
     def add_p(self, p):
-        pass
+        if not self.has_p(p):
+            self.permissions.append(p)
 
     def remove_p(self, p):
-        pass
+        if self.has_p(p):
+            self.permissions.remove(p)
 
     def has_p(self, p):
-        pass
+        return self.permissions is not None and len(self.permissions) != 0 and p in self.permissions
 
     def reset_p(self):
-        pass
+        self.permissions = []
 
     def __repr__(self):
         return '<Role: %r>' % self.name
@@ -113,12 +116,14 @@ class User(db.Model, UserMixin):
     followers = db.relationship('Follow', foreign_keys=[Follow.followed_id], back_populates='followed', lazy='dynamic',
                                 cascade='all')
     collections = db.relationship('Collect', back_populates='collector', cascade='all')
-    posts = ''
-    photos = ''
-    comments = ''
+    posts = db.relationship('User', back_populates='author', cascade='all')
+    photos = db.relationship('Photo', back_populates='author', cascade='all')
+    comments = db.relationship('Comment', back_populates='author', cascade='all')
 
     def __init__(self, **kwargs):
         super(User, self).__init__(**kwargs)
+        self.generate_avatar()
+        self.follow(self)
         self.set_role()
 
     def set_role(self):
@@ -141,58 +146,89 @@ class User(db.Model, UserMixin):
         return check_password_hash(self.password_hash, p)
 
     def can(self, p_name):
-        pass
+        p = Permission.query.filter_by(name=p_name).first()
+        return p is not None and self.role is not None and p in self.role.permissions
 
+    @property
     def is_admin(self):
-        pass
+        return self.role.name == 'Administrator'
 
     def ping(self):
-        pass
+        self.last_seen = datetime.utcnow()
+        db.session.commit()
 
-    def gravatar(self):
-        pass
+    def generate_avatar(self):
+        avatar = Identicon()
+        filenames = avatar.generate(text=self.username)
+        self.avatar_s = filenames[0]
+        self.avatar_m = filenames[1]
+        self.avatar_l = filenames[2]
+        db.session.commit()
 
-    def follow(self, u):
-        pass
+    def follow(self, user):
+        if not self.is_following(user):
+            f = Follow(follower=self, followed=user)
+            db.session.add(f)
+            db.session.commit()
 
-    def unfollow(self, u):
-        pass
+    def unfollow(self, user):
+        f = self.following.filter_by(followed_id=user.id).first()
+        if f:
+            db.session.delete(f)
+            db.session.commit()
 
-    def is_following(self, p):
-        pass
+    def is_following(self, user):
+        if user.id is None:
+            return False
+        return self.following.filter_by(followed_id=user.id).first() is not None
 
-    def is_followed_by(self, p):
-        pass
+    def is_followed_by(self, user):
+        return self.followers.filter_by(follower_id=user.id).first() is not None
 
+    @property
     def followed_posts(self):
-        pass
+        return Post.query.join(Follow, Follow.followed_id == Photo.author_id).filter(Follow.follower_id == self.id)
 
+    @property
     def followed_photos(self):
-        pass
+        return Photo.query.join(Follow, Follow.followed_id == Photo.author_id).filter(Follow.follower_id == self.id)
 
     def collect(self, p):
-        pass
+        if not self.is_collecting(p):
+            c = Collect(collector=self, collected=p)
+            db.session.add(c)
+            db.session.commit()
 
     def uncollect(self, p):
-        pass
+        c = Collect.query.with_parent(self).filter_by(collected_id=p.id).first()
+        if c:
+            db.session.delete(c)
+            db.session.commit()
 
     def is_collecting(self, p):
-        pass
+        return Collect.query.with_parent(self).filter_by(collected_id=p.id).first() is not None
 
     def lock(self):
-        pass
+        self.locked = True
+        self.role = Role.query.filter_by(name='Locked').first()
+        db.session.commit()
 
     def unlock(self):
-        pass
+        self.locked = False
+        self.role = Role.query.filter_by(name='User').first()
+        db.session.commit()
 
     def block(self):
-        pass
+        self.active = False
+        db.session.commit()
 
     def unblock(self):
-        pass
+        self.active = True
+        db.session.commit()
 
+    @property
     def is_active(self):
-        pass
+        return self.active
 
     def __repr__(self):
         return '<User: %r>' % self.username
@@ -218,6 +254,15 @@ class Category(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64), unique=True, index=True)
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+    posts = db.relationship('Post', back_populates='category')
+
+    def delete(self):
+        default_category = Category.query.get(1)
+        posts = self.posts[:]
+        for post in posts:
+            post.category = default_category
+        db.session.delete(self)
+        db.session.commit()
 
 
 class Post(db.Model):
@@ -227,11 +272,11 @@ class Post(db.Model):
     flag = db.Column(db.Integer, default=0)
     can_comment = db.Column(db.Boolean, default=True)
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
-    author_id = ''
-    author = ''
-    comments = ''
-    category_id = ''
-    category = ''
+    author_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    author = db.relationship('User', back_populates='posts')
+    comments = db.relationship('Comment', back_populates='post', cascade='all, delete-orphan')
+    category_id = db.Column(db.Integer, db.ForeignKey('category.id'))
+    category = db.relationship('Category', back_populates='posts')
 
 
 class Comment(db.Model):
@@ -242,15 +287,15 @@ class Comment(db.Model):
     reviewed = db.Column(db.Boolean, default=False)
     disabled = db.Column(db.Boolean, default=False)
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
-    author_id = ''
-    author = ''
-    post_id = ''
-    post = ''
-    replied_id = ''
-    replies = ''
-    replied = ''
-    photo_id = ''
-    photo = ''
+    author_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    author = db.relationship('User', back_populates='comments')
+    post_id = db.Column(db.Integer, db.ForeignKey('post.id'))
+    post = db.relationship('Post', back_populates='comments')
+    replied_id = db.Column(db.Integer, db.ForeignKey('comment.id'))
+    replies = db.relationship('Comment', back_populates='replied', cascade='all, delete-orphan')
+    replied = db.relationship('Comment', back_populates='replies', remote_side=[id])
+    photo_id = db.Column(db.Integer, db.ForeignKey('photo.id'))
+    photo = db.relationship('Photo', back_populates='comments')
 
 
 class Link(db.Model):
@@ -279,9 +324,9 @@ class Photo(db.Model):
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
     tags = db.relationship('Tag', secondary=tagging, back_populates='photo')
     collectors = db.relationship('Collect', back_populates='collected', cascade='all')
-    author_id = ''
-    author = ''
-    comments = ''
+    author_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    author = db.relationship('User', back_populates='photos')
+    comments = db.relationship('Comment', back_populates='photo', cascade='all')
 
 
 class Tag(db.Model):
