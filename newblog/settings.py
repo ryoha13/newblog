@@ -5,7 +5,9 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 
 
 class Operations:
-    pass
+    CONFIRM = 'confirm account'
+    RESET_PASSWORD = 'reset-password'
+    CHANGE_EMAIL = 'change-email'
 
 
 class Config(object):

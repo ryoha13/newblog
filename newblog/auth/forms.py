@@ -30,3 +30,10 @@ class RegisterForm(FlaskForm):
 class ResetPasswordRequestForm(FlaskForm):
     email = StringField('邮箱', validators=[DataRequired(), Length(1, 64), Email()])
     submit = SubmitField('发送')
+
+
+class ResetPasswordForm(FlaskForm):
+    email = StringField('邮箱', validators=[DataRequired(), Length(1, 64), Email()])
+    password = PasswordField('密码', validators=[DataRequired(), Length(1, 128), EqualTo('password2')])
+    password2 = PasswordField('确认密码', validators=[DataRequired(), Length(1, 128)])
+    submit = SubmitField('提交')
