@@ -75,7 +75,7 @@ class Follow(db.Model):
     followed_id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
     follower = db.relationship('User', foreign_keys=[follower_id], back_populates='following', lazy='joined')
-    followed = db.relationship('User', foreign_keys=[followed_id], back_populates='following', lazy='joined')
+    followed = db.relationship('User', foreign_keys=[followed_id], back_populates='followers', lazy='joined')
 
 
 class Collect(db.Model):
@@ -116,7 +116,7 @@ class User(db.Model, UserMixin):
     followers = db.relationship('Follow', foreign_keys=[Follow.followed_id], back_populates='followed', lazy='dynamic',
                                 cascade='all')
     collections = db.relationship('Collect', back_populates='collector', cascade='all')
-    posts = db.relationship('User', back_populates='author', cascade='all')
+    posts = db.relationship('Post', back_populates='author', cascade='all')
     photos = db.relationship('Photo', back_populates='author', cascade='all')
     comments = db.relationship('Comment', back_populates='author', cascade='all')
 
@@ -322,7 +322,7 @@ class Photo(db.Model):
     can_comment = db.Column(db.Boolean, default=True)
     flag = db.Column(db.Integer, default=0)
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
-    tags = db.relationship('Tag', secondary=tagging, back_populates='photo')
+    tags = db.relationship('Tag', secondary=tagging, back_populates='photos')
     collectors = db.relationship('Collect', back_populates='collected', cascade='all')
     author_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     author = db.relationship('User', back_populates='photos')

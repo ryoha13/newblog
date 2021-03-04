@@ -12,7 +12,7 @@
                 <small>Secondary Text</small>
             </h1>
             <div>
-                <img src="{{ url_for('main.get_avatar', filename=current_user.avatar_s) }}">
+                <img src="{{ url_for('main.get_avatar',) }}">
             </div>
 
             <!-- Blog Post -->
@@ -151,10 +151,15 @@
                 </div>
             </div>
             <div>
-                <div>
-                    <img class="rounded-circle" src="http://placehold.it/100x100" alt="Card image cap">
-                    <p>Kitagawa Ryoha</p>
-                    <p>@Kitagawa Ryoha</p>
+                <div class="mb-3 row justify-content-around">
+                    <div class="col-4">
+                        <img class="rounded-circle" src="http://placehold.it/100x100" alt="Card image cap">
+
+                    </div>
+                    <div class="col-4">
+                         <p>Kitagawa Ryoha</p>
+                        <p>@Kitagawa Ryoha</p>
+                    </div>
                 </div>
                 <div class="d-flex justify-content-between">
                     <button class="btn btn-sm btn-outline-secondary flex-fill" type="button">Message</button>

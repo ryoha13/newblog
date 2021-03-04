@@ -1,7 +1,7 @@
 import os
 
 
-basedir = os.path.abspath(os.path.dirname(__file__))
+basedir = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
 
 
 class Operations:
@@ -17,6 +17,8 @@ class Config(object):
     ADMIN_EMAIL = os.getenv('ADMIN_EMAIL')
 
     ALBUMY_UPLOAD_PATH = os.path.join(basedir, 'uploads')
+    AVATARS_SAVE_PATH = os.path.join(ALBUMY_UPLOAD_PATH, 'avatars')
+    AVATARS_SIZE_TUPLE = (30, 100, 200)
 
 
 class DevConfig(Config):
