@@ -62,7 +62,7 @@ def redirect_back(default='main.index', **kwargs):
         if not target:
             continue
         if is_safe_url(target):
-            return redirect_back(target)
+            return redirect(target)
     return redirect(url_for(default, **kwargs))
 
 

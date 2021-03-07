@@ -1,0 +1,126 @@
+<div class="col-md-4">
+
+    <!-- Search Widget -->
+    <div class="card my-4">
+        <h5 class="card-header">Search</h5>
+        <div class="card-body">
+            <div class="input-group">
+                <input type="text" class="form-control" placeholder="Search for...">
+                <span class="input-group-append">
+                <button class="btn btn-secondary" type="button">Go!</button>
+              </span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Categories Widget -->
+    <div class="card my-4">
+        <h5 class="card-header">Categories</h5>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-lg-6">
+                    <ul class="list-unstyled mb-0">
+                        <li>
+                            <a href="#">Web Design</a>
+                        </li>
+                        <li>
+                            <a href="#">HTML</a>
+                        </li>
+                        <li>
+                            <a href="#">Freebies</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-lg-6">
+                    <ul class="list-unstyled mb-0">
+                        <li>
+                            <a href="#">JavaScript</a>
+                        </li>
+                        <li>
+                            <a href="#">CSS</a>
+                        </li>
+                        <li>
+                            <a href="#">Tutorials</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Side Widget -->
+    <div class="card my-4">
+        <h5 class="card-header">Side Widget</h5>
+        <div class="card-body">
+            You can put anything you want inside of these side widgets. They are easy to use, and feature the
+            new Bootstrap 4 card containers!
+        </div>
+    </div>
+    <div class="card mb-3" style="max-width: 540px;">
+        <div class="row g-0">
+            <div class="col-md-4 align-self-center ava">
+                {% if current_user.is_authenticated %}
+                <img class="ms-2 card-img-top rounded-circle"
+                     src="{{ url_for('main.get_avatar', filename=current_user.avatar_m) }}"
+                     alt="Card image cap">
+                {% else %}
+                    <img class="ms-2 card-img-top rounded-circle"
+                     src="http://placehold.it/100x100"
+                     alt="Card image cap">
+                {% endif %}
+            </div>
+            <div class="col-md-8">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        {% if current_user.is_authenticated %}
+                            <p>{{ current_user.username }}</p>
+                        {% else %}
+                            <p>Hello, Stranger</p>
+                        {% endif %}
+                    </h5>
+                    <p class="card-text">
+                        {% if current_user.is_authenticated %}
+                        {{ current_user.bio | truncate(60) }}
+                        {% else %}
+                            stranger world
+                        {% endif %}
+                    </p>
+                    <p class="card-text">
+                        <small class="text-muted">
+                            {% if current_user.is_authenticated %}
+                            {{ moment(current_user.last_seen).fromNow() }}
+                            {% else %}
+                                {{ moment().format('LL') }}
+                            {% endif %}
+                        </small>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div>
+        {#                <div class="mb-3 row justify-content-around">#}
+        {#                    <div class="col-4">#}
+        {#                        <img class="rounded-circle"#}
+        {#                             src="{{ url_for('main.get_avatar', filename=current_user.avatar_m) }}"#}
+        {#                             alt="Card image cap">#}
+        {##}
+        {#                    </div>#}
+        {#                    <div class="col-4">#}
+        {#                        {% if current_user.is_authenticated %}#}
+        {#                            <p>{{ current_user.username }}</p>#}
+        {#                            <p>{{ current_user.website }}</p>#}
+        {#                        {% else %}#}
+        {#                            <p>Hello, Stranger</p>#}
+        {#                        {% endif %}#}
+        {#                    </div>#}
+        {#                </div>#}
+        <div class="d-flex justify-content-between">
+            <button class="btn btn-sm btn-outline-secondary flex-fill" type="button">Message</button>
+            <button class="btn btn-sm btn-outline-primary flex-fill" type="button" style="margin-left: 10px;">
+                Follow
+            </button>
+        </div>
+    </div>
+
+</div>

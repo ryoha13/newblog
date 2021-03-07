@@ -1,35 +1,67 @@
-<nav class="navbar navbar-expand-lg navbar-light" style="background-color: #e3f2fd;">
-    <div class="container">
-        <a class="navbar-brand" href="#">Ryoha's World</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
-                aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse d-flex justify-content-end" id="navbarSupportedContent">
-            <ul class="navbar-nav w-25 d-flex justify-content-around">
-                <li class="nav-item">
-                    <a class="nav-link" aria-current="page" href="#">主页</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">分类</a>
-                </li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
-                       data-bs-toggle="dropdown" aria-expanded="false">
-                        账户
-                    </a>
-                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <li><a class="dropdown-item" href="#">Action</a></li>
-                        <li><a class="dropdown-item" href="#">Another action</a></li>
-                        <li>
-                            <hr class="dropdown-divider">
-                        </li>
-                        <li><a class="dropdown-item" href="#">Something else here</a></li>
-                    </ul>
-                </li>
-            </ul>
-            <a class="btn btn-sm btn-outline-primary" href="{{ url_for('auth.login') }}">登录</a>
+<header class="w3l-header">
+    <nav class="navbar navbar-expand-lg navbar-light nav-fill px-lg-0 py-0 px-3">
+        <div class="container">
+            <a class="navbar-brand" href="#">Ryoha's World</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                    aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse d-flex justify-content-end" id="navbarSupportedContent">
+                <ul class="navbar-nav w-25 d-flex justify-content-around">
+                    <li class="nav-item">
+                        <a class="nav-link" aria-current="page" href="{{ url_for('main.index') }}">主页</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">分类</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                           data-bs-toggle="dropdown" aria-expanded="false">
+                            账户
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <li><a class="dropdown-item" href="#">Action</a></li>
+                            <li><a class="dropdown-item" href="#">Another action</a></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li><a class="dropdown-item" href="#">Something else here</a></li>
+                        </ul>
+                    </li>
+
+                </ul>
+                <div class="ms-3 me-3 header-author d-flex ml-lg-4 pl-2 mt-lg-0">
+                    {% if current_user.is_authenticated %}
+                        <a class="img-circle " href="#">
+                            <img class="img-fluid" src="{{ url_for('main.get_avatar', filename=current_user.avatar_s) }}" alt="...">
+                        </a>
+                        <div class="align-self-center ml-3">
+                            <a>
+                                <h5>{{ current_user.username }}</h5>
+                            </a>
+                        </div>
+                    {% else %}
+                        <a class="img-circle " href="#">
+                            <img class="img-fluid" src="http://placehold.it/30x30" alt="...">
+                        </a>
+                        <div class="align-self-center ml-3">
+                            <a>
+                                <h5>Stranger</h5>
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="ml-3">
+                    {% if current_user.is_authenticated %}
+                        <a class="btn btn-sm btn-outline-primary" href="{{ url_for('auth.logout') }}">退出</a>
+                    {% else %}
+                        <a class="btn btn-sm btn-outline-primary" href="{{ url_for('auth.login') }}">登录</a>
+                    {% endif %}
+                </div>
+
+            </div>
         </div>
-    </div>
-</nav>
+    </nav>
+</header>
+

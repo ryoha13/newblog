@@ -1,3 +1,23 @@
 body {
-    font-family: "Microsoft YaHei UI", 微软雅黑, sans-serif;
+    font-family: "Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","微软雅黑",Arial,sans-serif;
 }
+
+.w3l-header {
+  padding: 20px 0;
+  box-shadow: 0 3px 9px rgba(0, 0, 0, 0.05); }
+
+.header-author .img-circle {
+  width: 50px;
+  height: 50px;
+  display: inline-block;
+  overflow: hidden;
+  background: #f3f6f9;
+  border-radius: 50%; }
+
+.header-author .img-circle img {
+  width: 100%;
+  min-height: 100%;
+  -o-object-fit: cover;
+  object-fit: cover;
+  -o-object-position: center;
+  object-position: center; }

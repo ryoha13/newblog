@@ -13,8 +13,11 @@ class Operations:
 class Config(object):
     SECRET_KEY = os.getenv('SECRET_KEY')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    DEBUG_TB_INTERCEPT_REDIRECTS = False
 
     ADMIN_EMAIL = os.getenv('ADMIN_EMAIL')
+
+    BLOG_PER_PAGE = 5
 
     ALBUMY_UPLOAD_PATH = os.path.join(basedir, 'uploads')
     AVATARS_SAVE_PATH = os.path.join(ALBUMY_UPLOAD_PATH, 'avatars')
