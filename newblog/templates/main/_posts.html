@@ -9,7 +9,7 @@
                     </a>
                 </div>
                 <div class="col-md-6 align-self-center mt-lg-0 mt-sm-5 mt-4">
-                    <a class="text-decoration-none text-body" href="#" style="font-size: 24px;line-height: 30px;">
+                    <a class="text-decoration-none text-body" href="{{ url_for('main.post', post_id=post.id) }}" style="font-size: 24px;line-height: 30px;">
                         {{ post.title }}
                     </a>
                     <p class="fs-6">{{ post.body | striptags | truncate(200) }}</p>
